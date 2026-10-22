@@ -90,7 +90,7 @@
             <label>Deskripsi<textarea id="project-description" required rows="3" maxlength="1000" placeholder="Apa yang dibuat dan apa peranmu?"></textarea></label>
             <label>Teknologi/keahlian<input id="project-tech" maxlength="200" placeholder="HTML, CSS, Firebase"></label>
             <label>Link demo atau GitHub (opsional)<input id="project-url" type="url" placeholder="https://..."></label>
-            <label>Gambar proyek (opsional)<input id="project-image" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <label>URL gambar proyek (opsional)<input id="project-image" type="url" placeholder="https://.../gambar-proyek.jpg"><small class="muted">Gunakan tautan gambar publik atau gambar yang sudah diunggah bersama website.</small></label>
             <button class="button" type="submit">Simpan proyek</button><button class="button button-outline" id="project-cancel" type="button" hidden>Batal edit</button><p class="form-message" id="project-message" role="status"></p>
           </form><div id="admin-project-list" class="admin-list"></div>
         </div>
@@ -99,17 +99,16 @@
             <label>Nama sertifikat/pelatihan<input id="certificate-name" required maxlength="150" placeholder="Nama sertifikat"></label>
             <label>Penerbit<input id="certificate-issuer" maxlength="120" placeholder="Lembaga penerbit"></label>
             <label>Tahun terbit<input id="certificate-year" maxlength="4" inputmode="numeric" placeholder="2026"></label>
-            <label>File sertifikat publik (PDF/JPG/PNG)<input id="certificate-file" type="file" accept=".pdf,image/png,image/jpeg,application/pdf" required></label>
-            <p class="muted small">Unggah hanya sertifikat yang memang aman untuk dibagikan secara publik. Jangan unggah KTP/KK di bagian ini.</p>
+            <label>Tautan sertifikat publik<input id="certificate-url" type="url" placeholder="https://..." required></label>
+            <p class="muted small">Masukkan tautan sertifikat yang memang aman dibagikan secara publik. Jangan cantumkan KTP/KK atau dokumen identitas.</p>
             <button class="button" type="submit">Tambah sertifikat</button><p class="form-message" id="certificate-message" role="status"></p>
           </form><div id="admin-certificate-list" class="admin-list"></div>
         </div>
         <div id="tab-private" class="admin-tab" hidden>
-          <p class="muted">File di bagian ini hanya dapat dibaca oleh UID admin yang diizinkan di Firebase Rules. File tidak memiliki tautan publik.</p>
+          <p class="muted">Fitur penyimpanan dokumen privat sementara dinonaktifkan agar website tetap menggunakan paket gratis. Jangan unggah KTP, KK, atau dokumen pribadi ke folder publik website.</p>
           <form id="private-form" class="admin-form">
-            <label>Nama dokumen<input id="private-name" required maxlength="120" placeholder="Contoh: KTP, KK, Sertifikat internal"></label>
-            <label>File privat (PDF/JPG/PNG)<input id="private-file" type="file" accept=".pdf,image/png,image/jpeg,application/pdf" required></label>
-            <button class="button" type="submit">Simpan dokumen privat</button><p class="form-message" id="private-message" role="status"></p>
+            <p class="muted small">Pengunggahan dokumen privat belum tersedia dalam mode gratis yang sedang digunakan.</p>
+            <button class="button" type="submit">Periksa status fitur</button><p class="form-message" id="private-message" role="status"></p>
           </form><div id="admin-private-list" class="admin-list"></div>
         </div>
         <div class="admin-footer"><button id="logout-button" class="button button-outline" type="button">Logout</button></div>
