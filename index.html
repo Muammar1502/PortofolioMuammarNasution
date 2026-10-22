@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6f4932" />
+    <meta name="description" content="Portofolio profesional dan CV online." />
+    <title>Portofolio Saya</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="site-header">
+        <a class="brand" href="#beranda"><span class="brand-mark">P</span><span>PORTOFOLIO<span class="brand-dot">.</span></span></a>
+        <nav><a href="#tentang">Tentang</a><a href="#keahlian">Keahlian</a><a href="#proyek">Proyek</a><a href="#sertifikat">Sertifikat</a><button id="open-login" class="button button-small">Admin</button></nav>
+      </header>
+      <main>
+        <section id="beranda" class="hero section-wrap">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> CV ONLINE & PORTOFOLIO</p>
+            <h1>Halo, saya <span id="hero-name">Nama Kamu</span>.<br><em>Siap berkarya</em> dan berkembang.</h1>
+            <p id="hero-summary" class="lead">Saya sedang membangun pengalaman, mengembangkan keterampilan, dan membuat karya digital yang bermanfaat.</p>
+            <div class="hero-actions"><a class="button" href="#proyek">Lihat Proyek <span>↗</span></a><a class="text-link" id="contact-email" href="mailto:emailkamu@example.com">Hubungi saya →</a></div>
+            <div class="hero-meta"><span><i class="status-dot"></i> Terbuka untuk peluang kerja</span><span id="hero-location">Indonesia</span></div>
+          </div>
+          <div class="hero-art">
+            <div class="portrait-placeholder"><div class="portrait-initial" id="portrait-initial">P</div><span>GANTI DENGAN FOTO PROFESIONAL</span></div>
+            <div class="floating-note"><span class="note-icon">✦</span><div><strong>Terus belajar.</strong><small>Terus membangun.</small></div></div>
+            <div class="art-stamp">PORTFOLIO<br>2026</div>
+          </div>
+        </section>
+        <section id="tentang" class="section-wrap section-block">
+          <div class="section-heading"><p class="eyebrow">01 / PROFIL</p><h2>Tentang <em>saya</em></h2></div>
+          <div class="about-grid"><p id="about-text" class="about-copy">Tuliskan perkenalan singkat tentang dirimu, bidang yang kamu minati, dan jenis pekerjaan yang ingin kamu tekuni.</p><div class="info-card"><div><span>Lokasi</span><strong id="about-location">Indonesia</strong></div><div><span>Email</span><strong id="about-email">emailkamu@example.com</strong></div><div><span>Status</span><strong>Terbuka untuk kerja online</strong></div></div></div>
+          <a class="text-link" id="cv-link" href="#" target="_blank" rel="noopener" hidden>Unduh CV PDF ↗</a>
+        </section>
+        <section id="keahlian" class="section-wrap section-block skills-section">
+          <div class="section-heading"><p class="eyebrow">02 / KEMAMPUAN</p><h2>Hal yang bisa <em>saya lakukan</em></h2></div>
+          <div id="skills-list" class="skills-list"><span>Komunikasi</span><span>Microsoft Office</span><span>Desain Digital</span><span>Pengembangan Web</span></div>
+        </section>
+        <section id="proyek" class="section-wrap section-block">
+          <div class="section-heading section-heading-row"><div><p class="eyebrow">03 / KARYA</p><h2>Proyek <em>pilihan</em></h2></div><p class="section-intro">Kumpulan karya, latihan, dan proyek yang pernah saya kerjakan.</p></div>
+          <div id="projects-grid" class="projects-grid"><div class="empty-state">Proyek akan ditampilkan di sini setelah kamu menambahkannya melalui admin.</div></div>
+        </section>
+        <section id="sertifikat" class="section-wrap section-block certificate-section">
+          <div class="section-heading"><p class="eyebrow">04 / PENCAPAIAN</p><h2>Sertifikat & <em>pelatihan</em></h2></div>
+          <div id="certificates-list" class="certificates-list"><div class="empty-state">Sertifikat publik akan ditampilkan di sini.</div></div>
+          <p class="privacy-note"><span>🔒</span> Dokumen identitas seperti KTP dan KK tidak ditampilkan di halaman publik.</p>
+        </section>
+        <section class="contact-section">
+          <div class="section-wrap contact-inner"><p class="eyebrow">05 / KONTAK</p><h2>Ada peluang menarik?<br><em>Mari terhubung.</em></h2><p>Saya terbuka untuk berdiskusi tentang pekerjaan, kolaborasi, dan proyek baru.</p><a class="button button-light" id="contact-button" href="mailto:emailkamu@example.com">Hubungi saya <span>↗</span></a></div>
+        </section>
+      </main>
+      <footer class="footer section-wrap"><a class="brand" href="#beranda"><span class="brand-mark">P</span><span>PORTOFOLIO<span class="brand-dot">.</span></span></a><span>© <span id="year"></span> Portofolio pribadi. Dibuat dengan semangat belajar.</span><a href="#beranda">Kembali ke atas ↑</a></footer>
+    </div>
+
+    <div id="login-modal" class="modal" aria-hidden="true">
+      <div class="modal-backdrop" data-close-login></div>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="login-title">
+        <button class="modal-close" data-close-login aria-label="Tutup">×</button>
+        <p class="eyebrow">AREA TERBATAS</p><h2 id="login-title">Login <em>admin</em></h2>
+        <p class="muted">Masuk menggunakan akun admin yang sudah dibuat di Firebase Authentication.</p>
+        <form id="login-form"><label>Email admin<input type="email" id="admin-email" autocomplete="username" required placeholder="email@contoh.com"></label><label>Password<input type="password" id="admin-password" autocomplete="current-password" required placeholder="Password" minlength="6"></label><button class="button full-width" type="submit">Masuk</button><p id="login-message" class="form-message" role="status"></p></form>
+      </section>
+    </div>
+
+    <div id="admin-panel" class="modal" aria-hidden="true">
+      <div class="modal-backdrop" data-close-admin></div>
+      <section class="modal-panel admin-panel" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+        <button class="modal-close" data-close-admin aria-label="Tutup">×</button>
+        <p class="eyebrow">PANEL PENGELOLAAN</p><h2 id="admin-title">Kelola <em>portofolio</em></h2>
+        <p id="admin-status" class="muted">Kamu sudah login.</p>
+        <div class="admin-tabs"><button class="tab-button active" data-tab="profile">Profil</button><button class="tab-button" data-tab="project">Proyek</button><button class="tab-button" data-tab="certificate">Sertifikat</button><button class="tab-button" data-tab="private">Dokumen privat</button></div>
+        <div id="tab-profile" class="admin-tab">
+          <form id="profile-form" class="admin-form">
+            <label>Nama lengkap<input id="profile-name" required maxlength="100" placeholder="Nama kamu"></label>
+            <label>Judul/profesi<input id="profile-title" maxlength="120" placeholder="Contoh: Admin, Desainer, Web Developer"></label>
+            <label>Email kontak<input id="profile-email" type="email" maxlength="150" placeholder="email@contoh.com"></label>
+            <label>Lokasi<input id="profile-location" maxlength="100" placeholder="Kota, Indonesia"></label>
+            <label>Ringkasan singkat<textarea id="profile-summary" rows="3" maxlength="500" placeholder="Perkenalkan dirimu secara singkat"></textarea></label>
+            <label>Tentang saya<textarea id="profile-about" rows="4" maxlength="1500" placeholder="Ceritakan pendidikan, minat, dan tujuan karier"></textarea></label>
+            <label>Keahlian (pisahkan dengan koma)<input id="profile-skills" maxlength="500" placeholder="Komunikasi, Excel, Desain"></label>
+            <label>Tautan CV PDF (opsional)<input id="profile-cv" type="url" placeholder="https://..."></label>
+            <button class="button" type="submit">Simpan profil</button><p class="form-message" id="profile-message" role="status"></p>
+          </form>
+        </div>
+        <div id="tab-project" class="admin-tab" hidden>
+          <form id="project-form" class="admin-form">
+            <input id="project-id" type="hidden">
+            <label>Nama proyek<input id="project-name" required maxlength="120" placeholder="Nama proyek"></label>
+            <label>Deskripsi<textarea id="project-description" required rows="3" maxlength="1000" placeholder="Apa yang dibuat dan apa peranmu?"></textarea></label>
+            <label>Teknologi/keahlian<input id="project-tech" maxlength="200" placeholder="HTML, CSS, Firebase"></label>
+            <label>Link demo atau GitHub (opsional)<input id="project-url" type="url" placeholder="https://..."></label>
+            <label>Gambar proyek (opsional)<input id="project-image" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <button class="button" type="submit">Simpan proyek</button><button class="button button-outline" id="project-cancel" type="button" hidden>Batal edit</button><p class="form-message" id="project-message" role="status"></p>
+          </form><div id="admin-project-list" class="admin-list"></div>
+        </div>
+        <div id="tab-certificate" class="admin-tab" hidden>
+          <form id="certificate-form" class="admin-form">
+            <label>Nama sertifikat/pelatihan<input id="certificate-name" required maxlength="150" placeholder="Nama sertifikat"></label>
+            <label>Penerbit<input id="certificate-issuer" maxlength="120" placeholder="Lembaga penerbit"></label>
+            <label>Tahun terbit<input id="certificate-year" maxlength="4" inputmode="numeric" placeholder="2026"></label>
+            <label>File sertifikat publik (PDF/JPG/PNG)<input id="certificate-file" type="file" accept=".pdf,image/png,image/jpeg,application/pdf" required></label>
+            <p class="muted small">Unggah hanya sertifikat yang memang aman untuk dibagikan secara publik. Jangan unggah KTP/KK di bagian ini.</p>
+            <button class="button" type="submit">Tambah sertifikat</button><p class="form-message" id="certificate-message" role="status"></p>
+          </form><div id="admin-certificate-list" class="admin-list"></div>
+        </div>
+        <div id="tab-private" class="admin-tab" hidden>
+          <p class="muted">File di bagian ini hanya dapat dibaca oleh UID admin yang diizinkan di Firebase Rules. File tidak memiliki tautan publik.</p>
+          <form id="private-form" class="admin-form">
+            <label>Nama dokumen<input id="private-name" required maxlength="120" placeholder="Contoh: KTP, KK, Sertifikat internal"></label>
+            <label>File privat (PDF/JPG/PNG)<input id="private-file" type="file" accept=".pdf,image/png,image/jpeg,application/pdf" required></label>
+            <button class="button" type="submit">Simpan dokumen privat</button><p class="form-message" id="private-message" role="status"></p>
+          </form><div id="admin-private-list" class="admin-list"></div>
+        </div>
+        <div class="admin-footer"><button id="logout-button" class="button button-outline" type="button">Logout</button></div>
+      </section>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
