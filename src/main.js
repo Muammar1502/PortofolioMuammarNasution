@@ -1,8 +1,7 @@
 import "./style.css";
-import { auth, db, storage, configIsPlaceholder } from "./firebase.js";
+import { auth, db, configIsPlaceholder } from "./firebase.js";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getBlob, getDownloadURL, deleteObject } from "firebase/storage";
 
 const $ = (id) => document.getElementById(id);
 const state = { user: null, projects: [], certificates: [], privateDocs: [] };
@@ -104,15 +103,10 @@ async function loadCertificates() {
   $("admin-certificate-list").querySelectorAll("[data-delete-cert]").forEach(btn => btn.addEventListener("click", () => removeCertificate(btn.dataset.deleteCert)));
 }
 async function loadPrivateDocs() {
-  if (!state.user) return;
-  try {
-    const snap = await getDocs(query(collection(db, "privateDocuments"), orderBy("createdAt", "desc")));
-    state.privateDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch { state.privateDocs = []; }
-  $("admin-private-list").innerHTML = state.privateDocs.map(d => `<div class="admin-list-item"><div><strong>${escapeHTML(d.name)}</strong><small>Dokumen privat · ${escapeHTML(d.originalName || "")}</small></div><div class="list-actions"><button data-download-private="${d.id}" class="mini-button">Unduh</button><button data-delete-private="${d.id}" class="mini-button danger">Hapus</button></div></div>`).join("");
-  $("admin-private-list").querySelectorAll("[data-download-private]").forEach(btn => btn.addEventListener("click", () => downloadPrivate(btn.dataset.downloadPrivate)));
-  $("admin-private-list").querySelectorAll("[data-delete-private]").forEach(btn => btn.addEventListener("click", () => removePrivate(btn.dataset.deletePrivate)));
+  state.privateDocs = [];
+  $("admin-private-list").innerHTML = `<div class="empty-state">Fitur dokumen privat sementara dinonaktifkan pada versi gratis ini.</div>`;
 }
+
 onAuthStateChanged(auth, async user => {
   state.user = user;
   $("open-login").textContent = user ? "Panel Admin" : "Admin";
@@ -138,17 +132,9 @@ $("project-form").addEventListener("submit", async e => {
   e.preventDefault();
   if (!state.user) return message("project-message", "Login admin terlebih dahulu.", true);
   const id = $("project-id").value;
-  const file = $("project-image").files[0];
+  const imageUrl = safeURL($("project-image").value.trim());
+  if ($("project-image").value.trim() && !imageUrl) return message("project-message", "Masukkan URL gambar yang diawali https:// atau http://.", true);
   try {
-    let imageUrl = id ? state.projects.find(p => p.id === id)?.imageUrl || "" : "";
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) throw new Error("Ukuran gambar maksimal 5 MB.");
-      if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) throw new Error("Format gambar harus JPG, PNG, atau WebP.");
-      const path = `public/project-images/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
-      await uploadBytes(ref(storage, path), file, { contentType: file.type });
-      // URL ini untuk gambar proyek yang memang ditujukan publik.
-      imageUrl = await getDownloadURL(ref(storage, path));
-    }
     const data = { name: $("project-name").value.trim(), description: $("project-description").value.trim(), tech: $("project-tech").value.trim(), url: $("project-url").value.trim(), imageUrl, updatedAt: serverTimestamp() };
     if (id) await updateDoc(doc(db, "projects", id), data); else await addDoc(collection(db, "projects"), { ...data, createdAt: serverTimestamp() });
     $("project-form").reset(); $("project-id").value = ""; $("project-cancel").hidden = true;
@@ -157,7 +143,7 @@ $("project-form").addEventListener("submit", async e => {
 });
 function editProject(id) {
   const p = state.projects.find(p => p.id === id); if (!p) return;
-  $("project-id").value = p.id; $("project-name").value = p.name || ""; $("project-description").value = p.description || ""; $("project-tech").value = p.tech || ""; $("project-url").value = p.url || ""; $("project-cancel").hidden = false;
+  $("project-id").value = p.id; $("project-name").value = p.name || ""; $("project-description").value = p.description || ""; $("project-tech").value = p.tech || ""; $("project-url").value = p.url || ""; $("project-image").value = p.imageUrl || ""; $("project-cancel").hidden = false;
   document.querySelector('[data-tab="project"]').click(); $("project-name").focus();
 }
 $("project-cancel").addEventListener("click", () => { $("project-form").reset(); $("project-id").value = ""; $("project-cancel").hidden = true; });
@@ -167,17 +153,14 @@ async function removeProject(id) {
   catch (err) { toast(`Gagal menghapus: ${err.code || "periksa Rules"}`); }
 }
 $("certificate-form").addEventListener("submit", async e => {
-  e.preventDefault(); if (!state.user) return message("certificate-message", "Login admin terlebih dahulu.", true);
-  const file = $("certificate-file").files[0]; if (!file) return;
+  e.preventDefault();
+  if (!state.user) return message("certificate-message", "Login admin terlebih dahulu.", true);
+  const publicUrl = safeURL($("certificate-url").value.trim());
+  if (!publicUrl) return message("certificate-message", "Masukkan tautan sertifikat yang valid (http:// atau https://).", true);
   try {
-    if (file.size > 8 * 1024 * 1024) throw new Error("Ukuran file maksimal 8 MB.");
-    const path = `public/certificates/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
-    await uploadBytes(ref(storage, path), file, { contentType: file.type });
-    // Sertifikat yang dipilih di tab ini memang akan menjadi publik.
-    const publicUrl = await getDownloadURL(ref(storage, path));
-    const data = { name: $("certificate-name").value.trim(), issuer: $("certificate-issuer").value.trim(), year: $("certificate-year").value.trim(), publicUrl, storagePath: path, createdAt: serverTimestamp() };
+    const data = { name: $("certificate-name").value.trim(), issuer: $("certificate-issuer").value.trim(), year: $("certificate-year").value.trim(), publicUrl, createdAt: serverTimestamp() };
     await addDoc(collection(db, "certificates"), data);
-    $("certificate-form").reset(); message("certificate-message", "Sertifikat berhasil ditambahkan dan dapat dilihat pengunjung."); await loadCertificates();
+    $("certificate-form").reset(); message("certificate-message", "Data sertifikat berhasil ditambahkan."); await loadCertificates();
   } catch (err) { message("certificate-message", `Gagal: ${err.message || err.code || "periksa Rules"}`, true); }
 });
 async function removeCertificate(id) {
@@ -185,28 +168,9 @@ async function removeCertificate(id) {
   try { await deleteDoc(doc(db, "certificates", id)); await loadCertificates(); toast("Sertifikat dihapus dari daftar."); }
   catch (err) { toast(`Gagal menghapus: ${err.code || "periksa Rules"}`); }
 }
-$("private-form").addEventListener("submit", async e => {
-  e.preventDefault(); if (!state.user) return message("private-message", "Login admin terlebih dahulu.", true);
-  const file = $("private-file").files[0]; if (!file) return;
-  try {
-    if (file.size > 10 * 1024 * 1024) throw new Error("Ukuran file maksimal 10 MB.");
-    if (!["application/pdf", "image/jpeg", "image/png"].includes(file.type)) throw new Error("Gunakan PDF, JPG, atau PNG.");
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const path = `private/${state.user.uid}/${crypto.randomUUID()}-${safeName}`;
-    await uploadBytes(ref(storage, path), file, { contentType: file.type, customMetadata: { ownerUid: state.user.uid } });
-    await addDoc(collection(db, "privateDocuments"), { name: $("private-name").value.trim(), originalName: file.name, storagePath: path, createdAt: serverTimestamp() });
-    $("private-form").reset(); message("private-message", "Dokumen tersimpan di area privat."); await loadPrivateDocs(); toast("Dokumen privat berhasil disimpan.");
-  } catch (err) { message("private-message", `Gagal menyimpan: ${err.message || err.code || "periksa Rules dan paket Storage"}`, true); }
+// Penyimpanan dokumen privat dinonaktifkan sementara agar proyek tetap dapat
+// berjalan tanpa Firebase Storage. Jangan simpan dokumen sensitif di folder publik.
+$("private-form").addEventListener("submit", e => {
+  e.preventDefault();
+  message("private-message", "Fitur dokumen privat sementara dinonaktifkan. Jangan unggah KTP, KK, atau dokumen pribadi ke website publik.", true);
 });
-async function downloadPrivate(id) {
-  const d = state.privateDocs.find(x => x.id === id); if (!d) return;
-  try {
-    const blob = await getBlob(ref(storage, d.storagePath));
-    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = d.originalName || d.name; a.click(); URL.revokeObjectURL(url);
-  } catch (err) { toast(`Tidak bisa mengunduh. Pastikan UID admin sudah diizinkan di Storage Rules. ${err.code || ""}`); }
-}
-async function removePrivate(id) {
-  const d = state.privateDocs.find(x => x.id === id); if (!d || !confirm("Hapus dokumen privat ini?")) return;
-  try { await deleteObject(ref(storage, d.storagePath)); await deleteDoc(doc(db, "privateDocuments", id)); await loadPrivateDocs(); toast("Dokumen privat dihapus."); }
-  catch (err) { toast(`Gagal menghapus: ${err.code || "periksa Rules"}`); }
-}
